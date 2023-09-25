@@ -10,10 +10,6 @@
 			"android": "6.0.0"
 		}
 	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/NativeScript/plugins.git"
-	},
 	"keywords": [
 		"NativeScript",
 		"background",
@@ -23,15 +19,16 @@
 		"iOS",
 		"Android"
 	],
-	"author": {
-		"name": "NativeScript",
-		"email": "oss@nativescript.org"
-	},
-	"bugs": {
-		"url": "https://github.com/NativeScript/plugins/issues"
-	},
-	"license": "Apache-2.0",
-	"homepage": "https://github.com/NativeScript/plugins",
 	"readmeFilename": "README.md",
-	"bootstrapper": "@nativescript/plugin-seed"
+	"bootstrapper": "@nativescript/plugin-seed",
+	"devDependencies": {
+		"@nativescript/core": "^8.5.9",
+		"@nativescript/types": "^8.5.0",
+		"@nativescript/webpack": "^5.0.17",
+		"ncp": "^2.0.0",
+		"ngc": "^1.0.0",
+		"rimraf": "^5.0.1",
+		"tsc": "^2.0.4",
+		"typescript": "^5.2.2"
+	}
 }

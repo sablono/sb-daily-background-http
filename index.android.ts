@@ -95,7 +95,7 @@ function onProgressReceiverCancelled(context: Context, uploadInfo: UploadInfo) {
     task.notify({ eventName: "cancelled", object: task });
 }
 
-function onProgressReceiverError(context: Context, uploadInfo: UploadInfo, response: ServerResponse, error: java.lang.Exception) {
+function onProgressReceiverError(context: Context, uploadInfo: UploadInfo, response: ServerResponse | java.lang.Exception, error: java.lang.Exception) {
 	const uploadId = uploadInfo.getUploadId();
 	const task = Task.fromId(uploadId);
 	task.setStatus('error');
@@ -103,7 +103,7 @@ function onProgressReceiverError(context: Context, uploadInfo: UploadInfo, respo
 		eventName: 'error',
 		object: task,
 		error,
-		responseCode: response && typeof response.getCode === 'function' ? response.getCode() : -1,
+		responseCode: response && !(response instanceof java.lang.Exception) && typeof response.getCode === 'function' ? response.getCode() : -1,
 		response,
 	});
 }
@@ -132,7 +132,7 @@ function initializeProgressReceiver() {
 			if(error instanceof net.gotev.uploadservice.exceptions.UserCancelledUploadException){
 				zonedOnCancelled(context, uploadInfo);
 			}else {
-				zonedOnError(context, uploadInfo, error);
+				zonedOnError(context, uploadInfo, error, error);
 			}
 			
 		},

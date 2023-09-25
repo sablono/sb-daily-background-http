@@ -131,3 +131,9 @@ dist
 
 
 .idea
+/index.android.d.ts
+/index.android.js
+/index.android.js.map
+/index.ios.d.ts
+/index.ios.js
+/index.ios.js.map

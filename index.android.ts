@@ -277,7 +277,7 @@ class Task extends ObservableBase {
 }
 
 function getBinaryRequest(taskId: string, options: common.Request, file: string) {
-	const request = new net.gotev.uploadservice.protocols.binary.BinaryUploadRequest(Application.android.context, options.url);
+	const request = new net.gotev.uploadservice.protocols.binary.BinaryUploadRequest(Utils.android.getApplicationContext(), options.url);
 	request.setUploadID(taskId);
 
 	request.setFileToUpload(file);
@@ -287,7 +287,7 @@ function getBinaryRequest(taskId: string, options: common.Request, file: string)
 }
 
 function getMultipartRequest(taskId: string, options: common.Request, params: any[]) {
-	const request = new net.gotev.uploadservice.protocols.multipart.MultipartUploadRequest(Application.android.context, options.url);
+	const request = new net.gotev.uploadservice.protocols.multipart.MultipartUploadRequest(Utils.android.getApplicationContext(), options.url);
 	request.setUploadID(taskId);
 
 	for (let i = 0; i < params.length; i++) {

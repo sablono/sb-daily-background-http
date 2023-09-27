@@ -178,12 +178,14 @@ class Session implements Session {
         }
 
         let fileURL: NSURL;
-        if (fileUri.substr(0, 7) === "file://") {
+        if (fileUri.startsWith("file://")) {
             // File URI in string format
             fileURL = NSURL.URLWithString(fileUri);
         } else if (fileUri.charAt(0) === "/") {
             // Absolute path with leading slash
             fileURL = NSURL.fileURLWithPath(fileUri);
+        } else {
+            throw new Error("Path '" + fileUri + "' is not valid. Must be either a file:// URL or an absolute path starting with /");
         }
 
         const newTask = this._session.uploadTaskWithRequestFromFile(request, fileURL);
@@ -333,49 +335,53 @@ class MultiMultiPartForm {
 
     public generateFile(): string {
         const CRLF = "\r\n";
-
-        const fileName = knownFolders.documents().path + "/temp-MPF-" + Math.floor(Math.random() * 100000000000) + ".tmp";
-
         const combinedData = NSMutableData.alloc().init();
 
         let results: string = "";
-        let tempString: NSString;
-        let newData: any;
         for (let i = 0; i < this.fields.length; i++) {
+            const fileName = this.fields[i].filename;
+            const isTextPart = !fileName;
+
             results += "--" + this.boundary + CRLF;
             results += 'Content-Disposition: form-data; name="' + this.fields[i].name + '"';
-            if (!this.fields[i].filename) {
+
+            if (isTextPart) {
                 results += CRLF + CRLF + this.fields[i].value + CRLF;
+                this.appendText(results, combinedData);
+                results = "";
             } else {
                 results += '; filename="' + this.fields[i].destFilename + '"';
                 if (this.fields[i].mimeType) {
                     results += CRLF + "Content-Type: " + this.fields[i].mimeType;
                 }
                 results += CRLF + CRLF;
-            }
+                this.appendText(results, combinedData);
+                const fileData = NSData.alloc().initWithContentsOfFile(fileName);
 
-            tempString = NSString.stringWithString(results);
-            results = "";
-            newData = tempString.dataUsingEncoding(NSUTF8StringEncoding);
-            combinedData.appendData(newData);
+                if(!fileData || fileData.length < 1) {
+                    throw new Error("Could not read file: " + fileName);
+                }
 
-
-            if (this.fields[i].filename) {
-                const fileData = NSData.alloc().initWithContentsOfFile(this.fields[i].filename);
                 combinedData.appendData(fileData);
                 results = CRLF;
             }
-
         }
+
         // Add final part of it...
         results += "--" + this.boundary + "--" + CRLF;
-        tempString = NSString.stringWithString(results);
-        newData = tempString.dataUsingEncoding(NSUTF8StringEncoding);
-        combinedData.appendData(newData);
+        this.appendText(results, combinedData);
+
+        const fileName = knownFolders.documents().path + "/temp-MPF-" + Math.floor(Math.random() * 100000000000) + ".tmp";
 
         NSFileManager.defaultManager.createFileAtPathContentsAttributes(fileName, combinedData, null);
 
         return fileName;
+    }
+
+    private appendText(text: string, combinedData){
+        const tempString = NSString.stringWithString(text);
+        const newData = tempString.dataUsingEncoding(NSUTF8StringEncoding);
+        combinedData.appendData(newData);
     }
 
     public getHeader(): string {

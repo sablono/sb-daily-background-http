@@ -2,26 +2,29 @@
 
 A plugin that allows you to make background HTTP uploads.
 
-## Contents
-* [Installation](#installation)
-* [Use @nativescript/background-http](#use-nativescriptbackground-http)
-    * [Handle upload task events](#handle-upload-task-events)
-* [API](#api)
-    * [init()](#init)
-    * [session()](#session)
-        * [uploadFile()](#uploadfile)
-        * [multipartUpload()](#multipartupload)
-    * [Upload request object](#upload-request-object) 
-    * [Task object](#task-object)
-        * [Task events](#task-events)
-* [Test the plugin locally](#test-the-plugin-locally)
-* [License](#license)
+## Packaging
+This is a "cherry-picked" fork of https://github.com/NativeScript/plugins/tree/main/packages/background-http. The origin is a mono-repo based on nx.
+The majority of the packaging and dependencies are aligned and picked, too but there is one essential "bug" in the current packaging.
 
-## Installation
+In the `tsconfig.json` you will find a section like this:
+````
+		"plugins": [
+			{
+				"transform": "@nativescript/webpack/dist/transformers/NativeClass",
+				"type": "raw"
+			}
+		]
+````
 
-```cli
-npm install @nativescript/background-http
-```
+This transformer is currently not applied because it is a feature of nx which is not available here right now. So we have to apply it manually. :(
+
+An easy but ugly way is to follow those steps:
+1. `npm i`
+2. `tsc --build --verbose`
+3. manually diff `index.ios.js` before and after. You will find sections at the top that we do not want to change. Manually role those back to the old state.
+4. `npm version patch|minor|major`
+5. `npm pack`
+6Create a release on GitHub and upload the created tarball.
 
 ## Use @nativescript/background-http
 

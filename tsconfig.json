@@ -6,20 +6,18 @@
 		"moduleResolution": "node",
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
-		"noEmitHelpers": false,
 		"target": "ES2020",
 		"module": "ESNext",
-		"lib": ["ESNext", "dom"],
 		"skipLibCheck": true,
 		"skipDefaultLibCheck": true,
-		"baseUrl": ".",
+		"lib": ["ESNext", "dom"],
+		"baseUrl": "./",
 		"plugins": [
 			{
 				"transform": "@nativescript/webpack/dist/transformers/NativeClass",
 				"type": "raw"
 			}
-		],
+		]
 	},
-	"exclude": ["**/*.spec.ts", "angular"],
-	"include": ["**/*.ts", "references.d.ts"]
+	"include": ["*.ts","platforms","typings", "references.d.ts"]
 }
